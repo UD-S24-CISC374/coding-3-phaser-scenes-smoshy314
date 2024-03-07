@@ -3,5 +3,5 @@ import { CONFIG } from "./config";
 
 window.addEventListener("load", () => {
     const game = new Phaser.Game(CONFIG);
-    console.info("Started main game:", game);
+    console.info("Started ain game:", game);
 });
