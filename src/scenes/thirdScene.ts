@@ -1,23 +1,26 @@
 import Phaser from "phaser";
 
-export default class MainScene extends Phaser.Scene {
+export class ThirdScene extends Phaser.Scene {
+    private scoreText: Phaser.GameObjects.Text;
     private platforms?: Phaser.Physics.Arcade.StaticGroup;
     private leaf?: Phaser.Physics.Arcade.Sprite;
     private portal?: Phaser.Physics.Arcade.Sprite;
     private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
     private suns?: Phaser.GameObjects.Group;
-    private scoreText: Phaser.GameObjects.Text;
-    private score: number;
-    private tickCount = 0;
+    score: number;
     constructor() {
-        super({ key: "MainScene" });
+        super({ key: "ThirdScene" });
+        console.log("SimpleScene#constructor");
     }
+
     create() {
-        this.add.image(600, 400, "city_bg").setScale(1.3);
+        const MainScene = this.scene.get("SecondScene");
+        // @ts-expect-error score exists i think
+        this.score = MainScene.score;
+        this.add.image(600, 400, "dino_bg").setScale(2.5);
         this.portal = this.physics.add.sprite(1200, 50, "portal").setScale(0.5);
         this.platforms = this.physics.add.staticGroup();
 
-        this.score = 0;
         this.scoreText = this.add.text(16, 16, `score: ${this.score}`, {
             fontSize: "32px",
             color: "#000",
@@ -72,45 +75,13 @@ export default class MainScene extends Phaser.Scene {
             this.leaf,
             this.portal,
             () => {
-                this.scene.start("SecondScene");
-                this.scene.stop("MainScene");
+                this.scene.start("FourthScene");
+                this.scene.stop("ThirdScene");
             },
             undefined,
             this
         );
 
-        //Anims
-        this.anims.create({
-            key: "left",
-            frames: this.anims.generateFrameNumbers("leaf", {
-                frames: [4, 5, 6, 7, 8, 9, 0, 1, 2, 3],
-            }),
-            frameRate: 10,
-            repeat: -1,
-        });
-        this.anims.create({
-            key: "turn",
-            frames: [{ key: "leaf", frame: 4 }],
-            frameRate: 20,
-        });
-
-        this.anims.create({
-            key: "right",
-            frames: this.anims.generateFrameNumbers("leaf", {
-                frames: [4, 3, 2, 1, 0, 9, 8, 7, 6, 5],
-            }),
-            frameRate: 10,
-            repeat: -1,
-        });
-
-        this.anims.create({
-            key: "portal_woosh",
-            frames: this.anims.generateFrameNumbers("portal", {
-                frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1],
-            }),
-            frameRate: 10,
-            repeat: -1,
-        });
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         this.portal?.anims.play("portal_woosh", true);
     }
